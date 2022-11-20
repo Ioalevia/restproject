@@ -2,11 +2,11 @@ import React from "react";
 
 const MenuItem = ({menu}) => {
     return (
-            <ul>
-                <li> <a href="#">Users</a></li>
-                <li> <a href="#">Projects</a></li>
-                <li> <a href="#">ToDo</a></li>
-            </ul>
+        <div class="header">
+	        <div class="container">
+	            <h2>Header ToDO Notes </h2>
+	        </div>
+        </div>
     )
 }
 
