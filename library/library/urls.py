@@ -26,6 +26,8 @@ from drf_yasg import openapi
 
 from rest_framework import permissions
 
+from graphene_django.views import GraphQLView
+
 schema_view = get_schema_view(
     openapi.Info(
         title='library',
@@ -53,4 +55,5 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema_redoc'),
     path('swagger<str:format>/', schema_view.without_ui()),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('graphql/', GraphQLView.as_view(graphiql=True)),
 ]
