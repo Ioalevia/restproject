@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'authors',
     'authapp',
     'corsheaders',
-    'todo'
+    'todo',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -150,4 +151,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
 }
