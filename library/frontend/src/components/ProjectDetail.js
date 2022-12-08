@@ -1,23 +1,24 @@
 import React from "react";
 import {useParams} from "react-router-dom";
 
-const ProjectItem = ({ project }) => {
+const ProjectItem = ({ project, delete_project }) => {
     return (
         <tr>
             <td>{project.id}</td>
             <td>{project.title}</td>
             <td>{project.link}</td>
             <td>{project.users}</td>
+            <td><button onClick={()=>delete_project(project.id)} type='button'>Delete</button></td>
         </tr>
     )
 }
 
-const ProjectDetail = ({ projects }) => {
-    console.log('projects=', projects)
+const ProjectDetail = ({ projects, delete_project }) => {
+    //console.log('projects=', projects)
     let { projectId } = useParams()
-    console.log('useParams=', projectId, typeof(projectId))
+    //console.log('useParams=', projectId, typeof(projectId))
     let project_filter = projects.filter((project) => project.title.includes(projectId))
-    console.log('project_filter=', project_filter)
+    //console.log('project_filter=', project_filter)
     return (
         <table>
             <tr>
@@ -26,7 +27,7 @@ const ProjectDetail = ({ projects }) => {
                 <th>LINK</th>
                 <th>USERS</th>
             </tr>
-            {project_filter.map((project) => <ProjectItem project={project} /> )}
+            {project_filter.map((project) => <ProjectItem project={project} delete_project={delete_project}/> )}
         </table>
     )
 }
