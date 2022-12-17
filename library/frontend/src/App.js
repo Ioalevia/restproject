@@ -11,6 +11,9 @@ import NotFound404 from "./components/NotFound404.js";
 import ProjectDetail from "./components/ProjectDetail.js";
 import LoginForm from './components/Auth.js'
 import Cookies from "universal-cookie/es6";
+import ProjectForm from "./components/ProjectForm.js";
+import TodoForm from "./components/TodoForm.js";
+
 
 class App extends React.Component {
     constructor(props) {
@@ -21,7 +24,53 @@ class App extends React.Component {
             'todos': [],
             'token': '',
             'current_user': '',
+            'link': '',
+            'name': '',
+            'text': ''
         }
+    }
+
+    create_todo(text, projects, users){
+        const headers = this.get_headers()
+        let is_active = true
+        const data = {text: text, projects: projects, users: users, is_active: is_active}
+        axios.post(`http://127.0.0.1:8000/api/todos/`, data,{headers}).then(response => {
+            this.load_data()
+        }).catch(error => {
+            console.log(error)
+            this.setState({'todos': []})
+        })
+    }
+
+    create_project(name, link, users){
+        const headers = this.get_headers()
+        const data = {name: name, link: link, users: users}
+        axios.post(`http://127.0.0.1:8000/api/projects/`,data ,{headers}).then(response => {
+            this.load_data()
+        }).catch(error => {
+            console.log(error)
+            this.setState({'projects': []})
+        })
+    }
+
+    delete_project(id) {
+        const headers = this.get_headers()
+        axios.delete(`http://127.0.0.1:8000/api/projects/${id}/`, {headers}).then(response => {
+            this.load_data()
+        }).catch(error => {
+            console.log(error)
+            this.setState({'projects': []})
+        })
+    }
+
+    delete_todo(id) {
+        const headers = this.get_headers()
+        axios.delete(`http://127.0.0.1:8000/api/todos/${id}/`, {headers}).then(response => {
+            this.load_data()
+        }).catch(error => {
+            console.log(error)
+            this.setState({'todos': []})
+        })
     }
 
     set_current_user(user) {
@@ -59,7 +108,7 @@ class App extends React.Component {
 
     get_headers() {
         let headers = {
-            'Content-Type': 'applications/json'
+            'Content-Type': 'application/json'
         }
         if (this.is_auth()) {
             headers['Authorization'] = 'Token ' + this.state.token
@@ -138,14 +187,17 @@ class App extends React.Component {
 
                         <Route exact path='/' element={<Navigate to='/projects' />} />
                         <Route path='/projects'>
-                            <Route index element={<ProjectList projects={this.state.projects}/>}/>
-                            <Route path=':projectId' element={<ProjectDetail projects={this.state.projects}/>}/>
+                            <Route index element={<ProjectList projects={this.state.projects}
+                                                               delete_project={(id) => this.delete_project(id)}/>}/>
+                            <Route path=':projectId' element={<ProjectDetail projects={this.state.projects} delete_project={(id) => this.delete_project(id)}/>}/>
 
                         </Route>
+                        <Route exact path='/projects/create' element={<ProjectForm users={this.state.users} create_project={(name, link, users)=> this.create_project(name, link, users)} />}/>
 
                         <Route exact path='/users' element={<UserList users={this.state.users}/>}/>
                         {/*<Route exact path='/projects' element={<ProjectList projects={this.state.projects}/>}/>*/}
-                        <Route exact path='/todos' element={<TodoList todos={this.state.todos}/>}/>
+                        <Route exact path='/todos' element={<TodoList todos={this.state.todos} delete_todo={(id)=> this.delete_todo(id)} />}/>
+                        <Route exact path='/todos/create' element={<TodoForm users={this.state.users} projects={this.state.projects} create_todo={(text, projects, users)=> this.create_todo(text, projects, users)} />}/>
                         <Route exact path='/login' element={<LoginForm
                             get_token={(username, password) => this.get_token(username, password)}/>}/>
                         <Route path='*' element={<NotFound404 />} />
